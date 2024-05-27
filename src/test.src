@@ -1,0 +1,76 @@
+// test.src
+// Unit testing framework
+
+// Individual test to run
+//
+// name: Test name
+// type: Test type for grouping results
+// desc: Optional test description
+UnitTest = {
+    "name": null,
+    "type": null
+}
+
+UNIT_TESTS = []
+
+// Create a new unit test type
+//
+// type: Test type for grouping results
+//
+// return: UnitTest instance with new type
+UnitTest.define = function(type)
+    test = new self
+    test.type = type
+    return test
+end function
+
+// Create a new UnitTest
+//
+// name: Test name
+// desc: Optional test description
+//
+// return: UnitTest (or other defined type) instance, slotted to run
+UnitTest.create = function(name)
+    // Instantiate
+    test = new self
+    test.name = name
+    test.type = self.type
+
+    // Slot into UNIT_TESTS
+    UNIT_TESTS.push(test)
+
+    return test
+end function
+
+// Run a unit test. Should be overwritten by test.
+//
+// return:
+//  true: Test succeeded
+//  false: Test failed
+//  string: Test failed with reason
+UnitTest.run = function()
+    return "Undefined 'run' method"
+end function
+
+// Import tests
+#import TestTest from test_list.src
+
+// Run tests
+total_pass = 0
+start_time = time
+for test in UNIT_TESTS
+    result = test.run()
+
+    // Check result
+    if result == true then
+        total_pass += 1
+    else if typeof(result) == "string" then
+        print("(" + test.type + ") " + test.name + ": " + result)
+    else
+        print("(" + test.type + ") " + test.name)
+    end if
+end for
+
+// Show results
+print("TESTS PASSED: " + str(total_pass) + " / " + str(UNIT_TESTS.len))
+print("TOOK: " + str(time - start_time) + "s")
