@@ -4,73 +4,117 @@
 // Individual test to run
 //
 // name: Test name
-// type: Test type for grouping results
+// unit: Unit name for grouping tests
 // desc: Optional test description
+// result: False (pass) or string explanation (fail)
 UnitTest = {
     "name": null,
-    "type": null
+    "unit": null,
+    "desc": null,
+    "result": null
 }
 
-UNIT_TESTS = []
-
-// Create a new unit test type
-//
-// type: Test type for grouping results
-//
-// return: UnitTest instance with new type
-UnitTest.define = function(type)
-    test = new self
-    test.type = type
-    return test
-end function
+UnitTest.tests = {}
 
 // Create a new UnitTest
 //
 // name: Test name
+// unit: Unit name for grouping tests
 // desc: Optional test description
 //
 // return: UnitTest (or other defined type) instance, slotted to run
-UnitTest.create = function(name)
+UnitTest.create = function(name, unit, desc="")
     // Instantiate
     test = new self
     test.name = name
-    test.type = self.type
+    test.unit = unit
+    test.desc = desc
 
-    // Slot into UNIT_TESTS
-    UNIT_TESTS.push(test)
+    // Slot in
+    if not self.tests.hasIndex(unit) then self.tests[unit] = []
+    self.tests[unit].push(test)
 
     return test
 end function
 
-// Run a unit test. Should be overwritten by test.
+// Run unit test. Abstract method.
 //
-// return:
-//  true: Test succeeded
-//  false: Test failed
-//  string: Test failed with reason
+// return: none
 UnitTest.run = function()
-    return "Undefined 'run' method"
+    self.status = "Undefined 'run' method"
 end function
 
-// Import tests
-#import TestTest from test_list.src
-
-// Run tests
-total_pass = 0
-start_time = time
-for test in UNIT_TESTS
-    result = test.run()
-
-    // Check result
-    if result == true then
-        total_pass += 1
-    else if typeof(result) == "string" then
-        print("(" + test.type + ") " + test.name + ": " + result)
-    else
-        print("(" + test.type + ") " + test.name)
+// Assert an expression is true
+UnitTest.assert = function(expr, desc='')
+    if not expr then
+        self.result = "Failed Assert (" + expr + ")"
+        if desc then self.result = self.result + ": " + desc
+        return true
     end if
-end for
+end function
 
-// Show results
-print("TESTS PASSED: " + str(total_pass) + " / " + str(UNIT_TESTS.len))
-print("TOOK: " + str(time - start_time) + "s")
+// Assert an expresion is false
+UnitTest.assertFalse = function(expr, desc='')
+    if expr then
+        self.result = "Failed AssertFalse (" + expr + ")"
+        if desc then self.result = self.result + ": " + desc
+        return true
+    end if
+end function
+
+// Assert two expressions are equal
+UnitTest.assertEqual = function(expr1, expr2, desc='')
+    if expr1 != expr2 then
+        self.result = "Failed AssertEqual (" + expr1 + "," + expr2 + ")"
+        if desc then self.result = self.result + ": " + desc
+        return true
+    end if
+end function
+
+// Assert two expressions are not equal
+UnitTest.assertNotEqual(expr1, expr2, desc='')
+    if expr1 == expr2 then
+        self.result = "Failed AssertEqual (" + expr1 + "," + expr2 + ")"
+        if desc then self.result = self.result + ": " + desc
+        return true
+    end if
+end function
+
+// Run slotted unit tests
+UnitTest.start = function()
+    total_pass = 0
+    total_run = 0
+    start_time = time
+    for unit in self.tests.indexes
+        unit_pass = 0
+        unit_run = 0
+
+        print("STARTING UNIT '" + unit + "' AT " + str(time - start_time) + "s")
+
+        for test in self.tests[unit]
+            total_run += 1
+            unit_run += 1
+
+            // Run test
+            result = test.run()
+            if not result then result = test.result
+
+            // Check result
+            if result == true then
+                total_pass += 1
+                unit_pass += 1
+            else if typeof(result) == "string" then
+                print(char(9) + "(" + test.type + ") " + test.name + ": " + result)
+            else
+                print(char(9) + "(" + test.type + ") " + test.name)
+            end if
+        end for
+
+        print("TESTS PASSED FOR '" + unit + "': " + str(unit_pass) + " / " + str(unit_run))
+
+    end for
+
+    // Show results
+    print("TESTS PASSED: " + str(total_pass) + " / " + str(total_run))
+    print("TOOK: " + str(time - start_time) + "s")
+end function
