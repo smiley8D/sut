@@ -1,0 +1,36 @@
+// S
+
+#import UnitTest from ../src/test.src
+
+// Example tests for testing the testing
+TestTest = UnitTest.define("TestTest")
+
+// Always passes
+TestTest.create("AlwayPass").run = function()
+    return true
+end function
+
+// // Always fails
+// TestTest.create("AlwaysFail").run = function()
+//     return false
+// end function
+
+// // Always fails and provides a reason
+// TestTest.create("AlwaysFailDetail").run = function()
+//     return "I was supposed to fail :("
+// end function
+
+// Check true == true
+TestTest.create("TrueIsTrue").run = function()
+return true == true
+end function
+
+// Check 1 == 1 
+TestTest.create("TrueIsTrue").run = function()
+    return 1 == 1
+end function
+
+// Check 4 * 5 == 20
+TestTest.create("TrueIsTrue").run = function()
+    return 4 * 5 == 20
+end function

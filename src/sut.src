@@ -1,5 +1,9 @@
-// test.src
-// Unit testing framework
+// sut.src
+// Smiley's Unit Testing framework
+
+Sut = {
+    tests = {}
+}
 
 // Individual test to run
 //
@@ -14,7 +18,48 @@ UnitTest = {
     "result": null
 }
 
-UnitTest.tests = {}
+// Run unit test. Abstract method.
+//
+// return: none
+UnitTest.run = function()
+    self.status = "Undefined 'run' method"
+end function
+
+// Assert an expression is true
+UnitTest.assert = function(expr, desc="")
+    if not expr then
+        self.result = "Failed Assert (" + expr + ")"
+        if desc then self.result = self.result + ": " + desc
+        return true
+    end if
+end function
+
+// Assert an expresion is false
+UnitTest.assertFalse = function(expr, desc="")
+    if expr then
+        self.result = "Failed AssertFalse (" + expr + ")"
+        if desc then self.result = self.result + ": " + desc
+        return true
+    end if
+end function
+
+// Assert two expressions are equal
+UnitTest.assertEqual = function(expr1, expr2, desc="")
+    if expr1 != expr2 then
+        self.result = "Failed AssertEqual (" + expr1 + "," + expr2 + ")"
+        if desc then self.result = self.result + ": " + desc
+        return true
+    end if
+end function
+
+// Assert two expressions are not equal
+UnitTest.assertNotEqual = function(expr1, expr2, desc="")
+    if expr1 == expr2 then
+        self.result = "Failed AssertEqual (" + expr1 + "," + expr2 + ")"
+        if desc then self.result = self.result + ": " + desc
+        return true
+    end if
+end function
 
 // Create a new UnitTest
 //
@@ -23,9 +68,9 @@ UnitTest.tests = {}
 // desc: Optional test description
 //
 // return: UnitTest (or other defined type) instance, slotted to run
-UnitTest.create = function(name, unit, desc="")
+Sut.create = function(name, unit, desc="")
     // Instantiate
-    test = new self
+    test = new UnitTest
     test.name = name
     test.unit = unit
     test.desc = desc
@@ -37,51 +82,8 @@ UnitTest.create = function(name, unit, desc="")
     return test
 end function
 
-// Run unit test. Abstract method.
-//
-// return: none
-UnitTest.run = function()
-    self.status = "Undefined 'run' method"
-end function
-
-// Assert an expression is true
-UnitTest.assert = function(expr, desc='')
-    if not expr then
-        self.result = "Failed Assert (" + expr + ")"
-        if desc then self.result = self.result + ": " + desc
-        return true
-    end if
-end function
-
-// Assert an expresion is false
-UnitTest.assertFalse = function(expr, desc='')
-    if expr then
-        self.result = "Failed AssertFalse (" + expr + ")"
-        if desc then self.result = self.result + ": " + desc
-        return true
-    end if
-end function
-
-// Assert two expressions are equal
-UnitTest.assertEqual = function(expr1, expr2, desc='')
-    if expr1 != expr2 then
-        self.result = "Failed AssertEqual (" + expr1 + "," + expr2 + ")"
-        if desc then self.result = self.result + ": " + desc
-        return true
-    end if
-end function
-
-// Assert two expressions are not equal
-UnitTest.assertNotEqual(expr1, expr2, desc='')
-    if expr1 == expr2 then
-        self.result = "Failed AssertEqual (" + expr1 + "," + expr2 + ")"
-        if desc then self.result = self.result + ": " + desc
-        return true
-    end if
-end function
-
 // Run slotted unit tests
-UnitTest.start = function()
+Sut.start = function()
     total_pass = 0
     total_run = 0
     start_time = time
@@ -118,3 +120,5 @@ UnitTest.start = function()
     print("TESTS PASSED: " + str(total_pass) + " / " + str(total_run))
     print("TOOK: " + str(time - start_time) + "s")
 end function
+
+module.exports = Sut
