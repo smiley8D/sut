@@ -2,7 +2,7 @@
 // Smiley's Unit Testing framework
 
 Sut = {
-    tests = {}
+    "tests": {}
 }
 
 // Individual test to run
@@ -99,16 +99,17 @@ Sut.start = function()
 
             // Run test
             result = test.run()
-            if not result then result = test.result
+            if not test.result then test.result = result
 
             // Check result
-            if result == true then
+            if test.result then
+                print(char(9) + test.name + ": " + test.desc)
+                if typeof(test.result) == "string" then
+                    print(char(9)*2 + test.result)
+                end if
+            else
                 total_pass += 1
                 unit_pass += 1
-            else if typeof(result) == "string" then
-                print(char(9) + "(" + test.type + ") " + test.name + ": " + result)
-            else
-                print(char(9) + "(" + test.type + ") " + test.name)
             end if
         end for
 
