@@ -1,0 +1,89 @@
+// Entry point for SUT unit tests
+
+#import Sut from ../src/sut.src
+
+// Always passes
+Sut.create("AlwayPass", "SUT").run = function()
+    return false
+end function
+
+// Always fails
+Sut.create("AlwaysFail", "SUT", "[PASS] Supposed to fail").run = function()
+    return true
+end function
+
+// Always fails and provides a reason
+Sut.create("AlwaysFailDetail", "SUT", "[PASS] Supposed to fail").run = function()
+    return "Example failure reason"
+end function
+
+// Assert true
+Sut.create("Assert_true", "SUT").run = function()
+    if self.assert(true) then return
+end function
+
+// Assert false
+Sut.create("Assert_false", "SUT", "[PASS] Supposed to fail").run = function()
+    if self.assert(false) then return
+end function
+
+// AssertFalse true
+Sut.create("Assert_true", "SUT", "[PASS] Supposed to fail").run = function()
+    if self.assertFalse(true) then return
+end function
+
+// AssertFalse false
+Sut.create("Assert_false", "SUT").run = function()
+    if self.assertFalse(false) then return
+end function
+
+// Assert true == true
+Sut.create("TrueIsTrue", "SUT").run = function()
+    if self.assertEqual(true, true) then return
+end function
+
+// AssertNotEqual true != false
+Sut.create("TrueIsNotFalse", "SUT").run = function()
+    if self.assertNotEqual(true, false) then return
+end function
+
+// AssertNotEqual true != true
+Sut.create("TrueIsFalse", "SUT", "[PASS] Supposed to fail").run = function()
+    if self.assertNotEqual(true, true) then return
+end function
+
+// Assert "cow" == "pig"
+Sut.create("CowAndPig", "SUT", "[PASS] Supposed to fail").run = function()
+    if self.assertEqual("cow", "pig") then return
+end function
+
+// Assert "one" == 1
+Sut.create("OneAnd1", "SUT", "[PASS] Supposed to fail").run = function()
+    if self.assertEqual("one", 1) then return
+end function
+
+// Assert int("1") == 1
+Sut.create("1And1", "SUT").run = function()
+    if self.assertEqual(val("1"), 1) then return
+end function
+
+// Check 1 == 1 
+Sut.create("TrueIsTrue", "SUT").run = function()
+    return 1 == 1
+end function
+
+// Check 4 * 5 == 20
+Sut.create("FancyTrueIsTrue", "SUT").run = function()
+    return 4 * 5 == 20
+end function
+
+Sut.start()
+
+// Extra check for supposed to fail tests that passed
+for unit in Sut.tests.values
+    for test in unit
+        if test.desc.indexOf("[PASS]") != null then
+            if not test.result then print("[FAIL] " + test.name + " should have failed but didn't")
+        end if
+    end for
+end for
