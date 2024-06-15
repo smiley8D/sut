@@ -38,52 +38,61 @@ Sut.create("Assert_false", "SUT").run = function()
 end function
 
 // Assert true == true
-Sut.create("TrueIsTrue", "SUT").run = function()
+Sut.create("AssertEqual_TrueTrue", "SUT").run = function()
     if self.assertEqual(true, true) then return
 end function
 
 // AssertNotEqual true != false
-Sut.create("TrueIsNotFalse", "SUT").run = function()
+Sut.create("AssertNotEqual_TrueFalse", "SUT").run = function()
     if self.assertNotEqual(true, false) then return
 end function
 
 // AssertNotEqual true != true
-Sut.create("TrueIsFalse", "SUT", "[PASS] Supposed to fail").run = function()
+Sut.create("AssertNotEqual_TrueTrue", "SUT", "[PASS] Supposed to fail").run = function()
     if self.assertNotEqual(true, true) then return
 end function
 
 // Assert "cow" == "pig"
-Sut.create("CowAndPig", "SUT", "[PASS] Supposed to fail").run = function()
+Sut.create("AssertEqual_CowPig", "SUT", "[PASS] Supposed to fail").run = function()
     if self.assertEqual("cow", "pig") then return
 end function
 
 // Assert "one" == 1
-Sut.create("OneAnd1", "SUT", "[PASS] Supposed to fail").run = function()
+Sut.create("AssertEqual_One_1", "SUT", "[PASS] Supposed to fail").run = function()
     if self.assertEqual("one", 1) then return
 end function
 
 // Assert int("1") == 1
-Sut.create("1And1", "SUT").run = function()
+Sut.create("AssertEqual_1_1", "SUT").run = function()
     if self.assertEqual(val("1"), 1) then return
 end function
 
 // Check 1 == 1 
-Sut.create("TrueIsTrue", "SUT").run = function()
+Sut.create("1==1", "SUT", "[PASS] Supposed to fail").run = function()
     return 1 == 1
 end function
 
 // Check 4 * 5 == 20
-Sut.create("FancyTrueIsTrue", "SUT").run = function()
+Sut.create("4 * 5 == 20", "SUT", "[PASS] Supposed to fail").run = function()
     return 4 * 5 == 20
 end function
 
 Sut.start()
 
 // Extra check for supposed to fail tests that passed
+should_fail = 0
+did_fail = 0
 for unit in Sut.tests.values
     for test in unit
         if test.desc.indexOf("[PASS]") != null then
-            if not test.result then print("[FAIL] " + test.name + " should have failed but didn't")
+            should_fail += 1
+            if not test.result then
+                print("[FAIL] " + test.name + " should have failed but didn't")
+            else
+                did_fail += 1
+            end if
         end if
     end for
 end for
+
+print("Correctly Failed: " + val(should_fail) + " / " + val(did_fail))
