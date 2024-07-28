@@ -27,4 +27,4 @@ A test is considered to have passed if `run` does not return a result (or return
 
 Assertions return true on failure and save the result to the unit test. They are used as follows:
 
-    if Assert(true) then return
+    if self.assert(true) then return
