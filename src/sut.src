@@ -90,8 +90,7 @@ Sut.start = function()
     for unit in self.tests.indexes
         unit_pass = 0
         unit_run = 0
-
-        print("STARTING UNIT '" + unit + "' AT " + str(round((time - start_time)*1000)/1000) + "s")
+        unit_time = time
 
         for test in self.tests[unit]
             total_run += 1
@@ -113,13 +112,12 @@ Sut.start = function()
             end if
         end for
 
-        print("TESTS PASSED FOR '" + unit + "': " + str(unit_pass) + " / " + str(unit_run))
+        print("TESTS PASSED FOR '" + unit + "': " + str(unit_pass) + " / " + str(unit_run) + " (" + str(round((time - unit_time)*1000)/1000) + "s)")
 
     end for
 
     // Show results
-    print("TESTS PASSED: " + str(total_pass) + " / " + str(total_run))
-    print("TOOK: " + str(round((time - start_time)*1000)/1000) + "s")
+    print("TESTS PASSED: " + str(total_pass) + " / " + str(total_run) + " (" + str(round((time - start_time)*1000)/1000) + "s)")
 end function
 
 module.exports = Sut
