@@ -55,7 +55,7 @@ end function
 // Assert two expressions are not equal
 UnitTest.assertNotEqual = function(expr1, expr2, desc="")
     if expr1 == expr2 then
-        self.result = "Failed AssertEqual (" + expr1 + "," + expr2 + ")"
+        self.result = "Failed AssertNotEqual (" + expr1 + "," + expr2 + ")"
         if desc then self.result = self.result + ": " + desc
         return true
     end if
